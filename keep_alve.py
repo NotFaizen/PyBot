@@ -5,7 +5,7 @@ app = Flask('')
 
 @app.route('/')
 def main():
-  return "Your bot is alive!"
+  return "<p style=\"font-family:'Lucidia Console'\">Your bot is alive!</p>"
 
 
 def run():

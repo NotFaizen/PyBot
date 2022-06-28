@@ -1,0 +1,10 @@
+aiohttp==3.7.4.post0
+aioify==0.4.1
+colorful==0.5.4
+discord.py==1.7.3
+Flask==2.0.2
+numpy==1.22.3
+pluralkit==0.1.3
+popcat_wrapper==1.6
+prettyprinter==0.18.0
+requests==2.26.0

@@ -2,6 +2,7 @@ import popcat_wrapper.popcat_wrapper as pop
 import os, discord, aiohttp,asyncio,re
 from discord.ext import commands
 from random import choice
+from util import url
 
 def textSplit(string:str, separator:str):
   muhlist = string.split(separator)
@@ -57,7 +58,9 @@ class Fun(commands.Cog):
   async def _8ball(self,ctx,*,question):
     key = os.getenv("key")
     res = await self.bot.func.jsonRequest(f"https://api.gofaizen.repl.co/fun/8ball?key={key}","response")
-    
+
+# 
+      
     embed = discord.Embed(title="The magical 8ball",color=ctx.author.color)
     embed.add_field(name="Your question", value=f"```\n{question}\n```",inline=False)
     embed.add_field(name="8ball's answer", value=f"```\n{res}\n```",inline=False)
@@ -76,21 +79,12 @@ class Fun(commands.Cog):
 
 
   @commands.command(name="owo",aliases=["owofy"])
-  async def owoowow(self,ctx,*,string: str=None):
-    # you wait here i come in a min after looking into how regex works in python 
-    # you need the `re` module ik ik
-    if (string is None):
-      return await ctx.reply("where the string to owofy")
+  async def owoowow(self,ctx,*,text: str=None):
+    text = url("encode",text)
+    async with aiohttp.ClientSession() as cs:
+      async with cs.get(f"https://resapi.up.railway.app/strings?text={text}&from_=text&to=owo") as r:
+        data = await r.json()
+        await ctx.send(data["text"])
 
-    faces=["(・`ω´・)",";;w;;","owo","UwU",">w<","^w^"];
-    string = re.sub(r"/(?:r|l)/g", "w", string)
-    string = re.sub(r"/(?:R|L)/g", "W", string)
-    string = re.sub(r"/n([aeiou])/g", "ny$1", string)
-    string = re.sub(r"/N([aeiou])/g", "Ny$1", string)
-    string = re.sub(r"/N([AEIOU])/g", "", string)
-    string = re.sub(r"/ove/g", "uv", string)
-    string = re.sub(r"/\!+/g", " "+ choice(faces)+ " ", string)
-    await ctx.send(string)
-    
 def setup(bot):
   bot.add_cog(Fun(bot))

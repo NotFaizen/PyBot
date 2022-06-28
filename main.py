@@ -12,6 +12,10 @@ from keep_alve import keep_alive
 from traceback import format_exception
 from datetime import datetime
 from replit import db
+from color import Color
+from threading import Thread
+
+prefixes: tuple = ("py!", "PY!", "Py!", "pY!")
 
 cf.use_style("monokai")
 bot = commands.Bot(
@@ -21,7 +25,7 @@ bot = commands.Bot(
   intents=discord.Intents.all(),
   strip_after_prefix=True,
   owner_ids=config.owners,
-	help_command=None
+  help_command=None
 )
 
 class Utilities:
@@ -34,50 +38,60 @@ class Utilities:
   async def channelSendMessage(channelID,message:str):
     await bot.get_channel(channelID).send(message)
 
-  async def help_embed(ctx:commands.Context,command:str,example,usage,description,cooldown:int="None",aliases:str="None"):
-    embed = discord.Embed(description=f"""**Description:** {description} \n**Cooldown:** {cooldown} \n**Usage:** `{usage}` \n**Aliases:** {aliases} \n**Example:** \n{example}""", color=ctx.author.color).set_author(name=f"Command: py!{command}", icon_url=ctx.author.avatar_url)
-    await ctx.reply(embed=embed)
-
 bot.func = util
 bot.test_func = Utilities
 bot.key = os.getenv("key")
+bot.Color = Color ; bot.Colour = Color
 
-@bot.listen()
-async def on_message(message):
-  if (message.author.bot):
-    return
-  if (message.author == bot.user):
-    return
-  if (f"<@!{bot.user.id}>" in message.content) or (f"<@{bot.user.id}>" in message.content):
-    embed = discord.Embed(description=f"Hi **{message.author.name}**! My prefix is `Py!`, run `Py!help` to get started.",color=message.author.color).set_author(name="PyBot", icon_url=bot.user.avatar_url).set_footer(text="The prefix and all commands are case insensitive")
-    await message.reply(embed=embed)
-@bot.event
-async def on_connect():
-  print(cf.green("Connected to discord!"))
+keep_alive()
+
+def berker(text):
+  time = None
+  text = quote(str(text))
+  who = bot.get_user(551786741296791562)
+  name = quote(str(who.name))
+  avatar = who.avatar_url
+  url = f"https://api-production-adc9.up.railway.app/discordsays?avatar={avatar}&username={name}&message={text}"
+  r = requests.get(url)
+  with open("./dumb_shit/berk.png","wb") as thefile:
+    thefile.write(r.content)
+berk_maker_9000 = aioify(obj=berker)
 
 @bot.event
 async def on_ready():
   db.set("start_time",time.time())
   print(cf.green(f"Logged in as {bot.user}!\n|-----------------------------------------|"))
-  
-keep_alive()
 
-def berker(text):
-  text = quote(str(text))
-  r = requests.get(f"https://app.resetxd.repl.co/berk?text={text}")
-  with open("./dumb_shit/berk.png","wb") as thefile:
-      thefile.write(r.content)
-      thefile.close()
+@bot.event
+async def on_connect():
+  print(cf.green("Connected to discord!"))
 
+@bot.event
+async def on_message_edit(before, after):
+  if after.content != before.content:
+    await bot.process_commands(after)
 
-berk_maker_9000 = aioify(obj=berker)
+@bot.listen("on_message")
+async def ping_for_prefix(message):
+  if (message.author.bot):
+    return
+  if (message.author == bot.user):
+    return
+  if (f"<@!{bot.user.id}>" in message.content) or (f"<@{bot.user.id}>" in message.content):
+    embed = discord.Embed(
+      description=f"Hi **{message.author.name}**! My prefix is `Py!`, run `Py!help` to get started.",
+      color=message.author.color
+    )
+    embed.set_author(name="PyBot", icon_url=bot.user.avatar_url)
+    embed.set_footer(text="The prefix and all commands are case insensitive")
+    await message.reply(embed=embed)
 
 @bot.command()
 async def berk(ctx,*,text):
-  await berk_maker_9000(text=text)
+  await berk_maker_9000(text)
   file = discord.File("./dumb_shit/berk.png")
   await ctx.reply(file=file)
-
+  os.remove("dumb_shit/berk.png")
 @bot.command(name="alteval")
 @commands.is_owner()
 async def _eval(ctx, *, code):
@@ -101,11 +115,12 @@ async def _eval(ctx, *, code):
     "math": math,
     "numpy": numpy,
     "aiohttp": aiohttp,
+    "requests": requests,
     "asyncio": asyncio,
     "channel": ctx.channel,
     "author": ctx.author,
     "guild": ctx.guild,
-    "message": ctx.message,
+    "message": ctx.message
   }
 
   stdout = io.StringIO()

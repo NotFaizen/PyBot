@@ -18,7 +18,7 @@ def writer(url,name):
   with open(f"dumb_shit/{name}","wb") as file:
       r = requests.get(url)
       file.write(r.content)
-      file.close()
+
 class WelcomeCard:
   def __init__(self,*,text_1:str,text_2:str,text_3:str):
     self.text_1 = text_1

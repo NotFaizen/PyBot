@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord,os
 from aioify import aioify
 from requests import get
+from util import encodeURIComponent
 def writer(link):
   rep = get(link)
   with open("./dumb_shit/file.png","wb") as lefile:
@@ -23,14 +24,14 @@ class discordsays(commands.Cog):
     async def discordsays(self, ctx,who:discord.Member=None):
       if (who is None):
         return await ctx.reply("You need to mention someone or use their username, id or username and tag")
-      baseLink = f"https://app.resetxd.repl.co/discordsays?avatar={who.avatar_url}&username={str(who.name).replace(' ','+')}"
+      baseLink = f"https://resapi.up.railway.app/discordsays?avatar={who.avatar_url}&username={encodeURIComponent(str(who.name))}"
       def checker(m):
         return m.channel == ctx.channel and m.author == ctx.author
       
       msg = await ctx.send("what message?")
       response = await self.bot.wait_for("message",check=checker)
       message_content = response.content
-      baseLink += f"&message={str(message_content).replace(' ','+')}"
+      baseLink += f"&message={encodeURIComponent(str(message_content))}"
       await msg.edit(content="what color? [no can be a answer too]")
       response = await self.bot.wait_for("message",check=checker)
       if "no" in response.content or "No" in response.content:
@@ -44,7 +45,7 @@ class discordsays(commands.Cog):
         pass
       else:
         color = response.content
-        baseLink += f"&time={str(color).replace(':','%3A').replace(' ','+')}"
+        baseLink += f"&time={encodeURIComponent(str(color))}"
       await writermethod(baseLink)
       file = discord.File("./dumb_shit/file.png")
       await ctx.send(file=file)

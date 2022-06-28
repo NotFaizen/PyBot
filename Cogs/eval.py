@@ -2,7 +2,7 @@ from time import time
 import time as Time
 from discord.ext import commands
 from inspect import getsource
-import discord,os,sys,random,math,util,aiohttp,asyncio
+import discord,os,sys,random,math,util,aiohttp,asyncio,requests
 from popcat_wrapper import popcat_wrapper as pop
 import numpy as np
 
@@ -47,7 +47,7 @@ class EvalCommand(commands.Cog):
             "import": __import__,
             "this": self,
             "ctx": ctx,
-            "bot":self.bot,
+            "bot": self.bot,
             "random": random,
             "pop": pop,
             "utils": util,
@@ -55,7 +55,13 @@ class EvalCommand(commands.Cog):
             "math": math,
             "numpy": np,
             "aiohttp": aiohttp,
-            "asyncio": asyncio
+            "asyncio": asyncio,
+            "requests": requests,
+            "asyncio": asyncio,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message
         }
         
         try:

@@ -152,3 +152,10 @@ async def color_test(ctx,color: Union[int,discord.colour.Color],filler_text: str
     color=color
   )
   await ctx.reply(embed=embed)
+
+
+def user_avatar(ctx,user: Union[int,discord.User] = "png", size=None):
+    sizes = [64, 128, 256, 512, 1024, 2048]
+    if not (size in sizes):
+        raise ValueError(f'bad argument: "{size}". Must be {", ".join(sizes)}')
+    
