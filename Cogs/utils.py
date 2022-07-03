@@ -1,9 +1,11 @@
 import discord; import random
 from discord.ext import commands
-from replit import db
+from resql import ReSql
 from config import yeah
 from util import isNaN
 from pag import Pag
+
+
 class Utilities(commands.Cog):
   def __init__(self,bot):
     self.bot = bot    
@@ -15,14 +17,14 @@ class Utilities(commands.Cog):
     if member == None:
       member = ctx.author
 
-    bio = db.get(f"{member.id}_bio")
+    bio = self.bot.db.get(f"{member.id}_bio", "main")
 
-    if db.get(f"{ctx.author.id}_bio") == None:
-      return await ctx.send("You haven't set a bio yet")
+    if self.bot.db.get(f"{ctx.author.id}_bio",  "main") == None:
+      return await ctx.send("You haven't set a bio yet, set one using `py!setbio <bio_content>`")
     if bio == None:
-      return await ctx.reply(f"No bio found for this user in the database")
+      return await ctx.reply(f"This user hasn't set a bio yet, tell them to set one using `py!setbio <bio_content>`")
     embed = discord.Embed(
-      title=f"{member}'s bio",
+      title=f"{member.name}'s bio",
       description=f"{bio}",
       color=ctx.author.color
     ).set_footer(text="Set a bio using py!setbio")
@@ -30,11 +32,11 @@ class Utilities(commands.Cog):
 
   @commands.command(name="setbio")
   async def set_bio(self,ctx,*, bio_content):
-    db[f"{ctx.author.id}_bio"] = bio_content
+    self.bot.db.insert(f"{ctx.author.id}_bio",bio_content,"main")
     await ctx.reply(f"{yeah} Set your bio to `{bio_content}`, use `py!bio` to view it.")
   
   @commands.command(name="count-brackets", aliases=["countbrackets", "bracket-count", "bracketcount"])
-  async def count_brackets(self,ctx,*,text:str):
+  async def count_brackets(self,ctx,*,text: str):
     sqr = {
       "left": text.count("]"),
       "right": text.count("[")

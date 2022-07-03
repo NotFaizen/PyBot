@@ -2,3 +2,5 @@
 ./config.py
 dumb_shit/
 welcome_bgs/
+venv/
+replit.nix

@@ -1,8 +1,12 @@
+import os
+os.system("pip install resql==0.1.5")
+
 from prettyprinter import pprint
 import os,discord,requests,util,asyncio,io,contextlib,textwrap
 import time,random,math,aiohttp,numpy,config
 import colorful as cf
 import popcat_wrapper.popcat_wrapper as pop
+
 
 from aioify import aioify
 from urllib.parse import quote
@@ -11,13 +15,14 @@ from discord.ext.commands import when_mentioned_or
 from keep_alve import keep_alive
 from traceback import format_exception
 from datetime import datetime
-from replit import db
+from resql import ReSql
 from color import Color
 from threading import Thread
 
 prefixes: tuple = ("py!", "PY!", "Py!", "pY!")
-
 cf.use_style("monokai")
+
+
 bot = commands.Bot(
   allowed_mentions=discord.AllowedMentions.none(),
   command_prefix=when_mentioned_or("py!", "PY!", "Py!", "pY!"),
@@ -27,6 +32,8 @@ bot = commands.Bot(
   owner_ids=config.owners,
   help_command=None
 )
+
+db = ReSql("gibmeyanfei.db")
 
 class Utilities:
   def botCommands(separator=", "):
@@ -38,6 +45,7 @@ class Utilities:
   async def channelSendMessage(channelID,message:str):
     await bot.get_channel(channelID).send(message)
 
+bot.db = db
 bot.func = util
 bot.test_func = Utilities
 bot.key = os.getenv("key")
@@ -59,7 +67,7 @@ berk_maker_9000 = aioify(obj=berker)
 
 @bot.event
 async def on_ready():
-  db.set("start_time",time.time())
+  db.insert("start_time",time.time(),"sub")
   print(cf.green(f"Logged in as {bot.user}!\n|-----------------------------------------|"))
 
 @bot.event

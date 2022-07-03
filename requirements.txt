@@ -8,3 +8,4 @@ pluralkit==0.1.3
 popcat_wrapper==1.6
 prettyprinter==0.18.0
 requests==2.26.0
+resql==0.1.5

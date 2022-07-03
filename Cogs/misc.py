@@ -1,12 +1,14 @@
 import discord,time,aiohttp,color,util
+
 from discord.ext import commands
 
-from replit import db
 from config import yeah
 from util import url
 from datetime import datetime
+from resql import ReSql
 # 260047232065
 
+db = ReSql("gibmeyanfei.db")
 
 class Misc(commands.Cog):
   def __init__(self,bot):
