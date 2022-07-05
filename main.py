@@ -50,6 +50,7 @@ bot.func = util
 bot.test_func = Utilities
 bot.key = os.getenv("key")
 bot.Color = Color ; bot.Colour = Color
+bot.time = time.time()
 
 keep_alive()
 
@@ -67,7 +68,6 @@ berk_maker_9000 = aioify(obj=berker)
 
 @bot.event
 async def on_ready():
-  db.insert("start_time",time.time(),"sub")
   print(cf.green(f"Logged in as {bot.user}!\n|-----------------------------------------|"))
 
 @bot.event

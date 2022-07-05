@@ -121,8 +121,8 @@ class Misc(commands.Cog):
   async def pybot_uptime(self,ctx):
     embed = discord.Embed(
       title="PyBot Uptime",
-      description=f"Up since <t:{int(round(db.get('start_time')))}:R>",
-      color=color.Color.azure()
+      description=f"Up since <t:{int(round(self.bot.time))}:R>",
+      color=ctx.author.color
     )
     await ctx.reply(embed=embed)
 def setup(bot):
