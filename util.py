@@ -2,10 +2,12 @@ import numpy as np
 import aiohttp,discord,os,requests,config
 from discord.ext import commands
 import random as rand
-from replit import db as DB
+from resql import ReSql
 from aiohttp import ClientSession
 from urllib.parse import quote,unquote
 from typing import Union
+
+db = ReSql()
 
 async def banner(user_id:int, size:int=1024):
   sizes = [64, 128, 256, 512, 1024, 2048]
@@ -89,26 +91,26 @@ async def jsonRequest(url, property=None):
 def textSplit(string:str, separator:str):
   try:
     muhlist = string.split(separator)
-    DB["split"] = [ each.strip() for each in muhlist ]
+    db.insert("split", [each.strip() for each in muhlist])
   except:
-    DB["split"] = None
+    db.insert("split",None)
 def splitText(index:int):
   try:
     index -= 1
-    return DB["split"][index]
+    return db.get("split")[index]
   except KeyError:
     return
   finally:
-    DB["split"] = []
+    db.insert("split",[])
 
 def joinSplitText(separator:str):
-  return separator.join(DB["split"])
+  return separator.join(db.get("split"))
 
 def getTextSplitLength():
   try:
-    return len(DB["split"])
+    return len(db.get("split"))
   finally:
-    DB["split"] = []
+    db.insert("split",[])
 
 def url(method:str, string:str):
   if (method == "encode"): return quote(string)
